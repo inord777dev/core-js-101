@@ -301,10 +301,18 @@ function propagateItemsByPositionIndex(arr) {
  *   [ 10, 10, 10, 10 ] => [ 10, 10, 10 ]
  */
 function get3TopItems(arr) {
-  // const
-  // const res = arr.reduce((prev, cur, index) => , []);
-  // arr
-  // return
+  const sort = arr.sort((a, b) => {
+    let res;
+    if (a > b) {
+      res = -1;
+    } else if (a < b) {
+      res = 1;
+    } else {
+      res = 0;
+    }
+    return res;
+  });
+  return sort.slice(0, Math.min(3, sort.length));
 }
 
 
