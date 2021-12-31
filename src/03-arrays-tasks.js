@@ -590,15 +590,16 @@ function distinct(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(array, keySelector, valueSelector) {
-  const res = new Map();
-  array.map((value) => {
-    let values = res.get(keySelector);
-    if (!values) {
-      res.set(keySelector, array.filter((x) => x === keySelector).map((y) => y[]));
-    }
-  });
-  return res;
+function group(/* array, keySelector, valueSelector */) {
+  // const res = new Map();
+  // array.map((value) => {
+  //   let values = res.get(keySelector);
+  //   if (!values) {
+  //     res.set(keySelector, array.filter((x) => x === keySelector).map((y) => y[]));
+  //   }
+  // });
+  // return res;
+  throw new Error('Not implemented');
 }
 
 /**
