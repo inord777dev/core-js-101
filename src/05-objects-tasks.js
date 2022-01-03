@@ -123,14 +123,14 @@ const cssSelectorBuilder = {
     if (!this.select.length) {
       this.select.push([]);
     }
-    console.log(value, 'push');
+    // console.log(value, 'push');
     this.select[this.select.length - 1].push(value);
     return this;
   },
 
   stackSet(value) {
     if ((value === 100 || value === 90 || value === 50) && this.last === value) {
-      console.log('Error1');
+      // console.log('Error1');
       this.stack.pop();
       this.last = 0;
       this.select.pop();
@@ -142,7 +142,7 @@ const cssSelectorBuilder = {
     const stack = this.stack[this.stack.length - 1];
     if (stack[stack.length - 1] < value
       || (this.stack.length > 1 && this.stack[this.stack.length - 2] < value)) {
-      console.log(this.select, 'Error2');
+      // console.log(this.select, 'Error2');
       this.stack.pop();
       this.last = 0;
       this.select.pop();
@@ -198,7 +198,7 @@ const cssSelectorBuilder = {
     this.stack.pop();
     this.last = 0;
     const result = this.select.pop().join('');
-    console.log(result, 'stringify');
+    // console.log(result, 'stringify');
     return result;
   },
 };
