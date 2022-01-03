@@ -590,16 +590,22 @@ function distinct(arr) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  // const res = new Map();
-  // array.map((value) => {
-  //   let values = res.get(keySelector);
-  //   if (!values) {
-  //     res.set(keySelector, array.filter((x) => x === keySelector).map((y) => y[]));
-  //   }
-  // });
-  // return res;
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const result = new Map();
+  const keys = array.map(keySelector);
+  const values = array.map(valueSelector);
+  keys.map((value, index) => {
+    let arr;
+    if (result.has(value)) {
+      arr = result.get(value);
+    } else {
+      arr = [];
+      result.set(value, arr);
+    }
+    arr.push(values[index]);
+    return arr;
+  });
+  return result;
 }
 
 /**
@@ -615,8 +621,8 @@ function group(/* array, keySelector, valueSelector */) {
  *   [[1, 2], [3, 4], [5, 6]], (x) => x     =>   [ 1, 2, 3, 4, 5, 6 ]
  *   ['one','two','three'], x=>x.split('')  =>   ['o','n','e','t','w','o','t','h','r','e','e']
  */
-function selectMany(/* arr, childrenSelector */) {
-  throw new Error('Not implemented');
+function selectMany(arr, childrenSelector) {
+  return arr.flatMap(childrenSelector);
 }
 
 /**
@@ -631,8 +637,8 @@ function selectMany(/* arr, childrenSelector */) {
  *   ['one','two','three'], [2]       => 'three'  (arr[2])
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
-function getElementByIndexes(/* arr, indexes */) {
-  throw new Error('Not implemented');
+function getElementByIndexes(arr, indexes) {
+  return indexes.reduce((acc, x) => acc[x], arr);
 }
 
 /**
@@ -653,8 +659,22 @@ function getElementByIndexes(/* arr, indexes */) {
  *   [ 1, 2, 3, 4, 5, 6, 7, 8 ]   =>  [ 5, 6, 7, 8, 1, 2, 3, 4 ]
  *
  */
-function swapHeadAndTail(/* arr */) {
-  throw new Error('Not implemented');
+function swapHeadAndTail(arr) {
+  // const mid = Math.round(arr.length / 2);
+  // return arr.map((a, i, v) => {
+  //   let x;
+  //   if (arr.length % 2 && i === mid - 1) {
+  //     x = a;
+  //   } else {
+  //     x = v[mid + i - (mid + i >= arr.length ? arr.length + (arr.length % 2) : 0)];
+  //   }
+  //   return x;
+  // });
+  const mid = Math.trunc(arr.length / 2);
+  const head = arr.slice(0, mid);
+  const midle = arr.length % 2 ? arr.slice(mid, mid + 1) : [];
+  const tail = arr.slice(mid + (arr.length % 2));
+  return [...tail, ...midle, ...head];
 }
 
 module.exports = {
