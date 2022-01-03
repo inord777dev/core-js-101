@@ -115,32 +115,91 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  select: [],
+  stack: [],
+  last: 0,
+
+  push(value) {
+    if (!this.select.length) {
+      this.select.push([]);
+    }
+    console.log(value, 'push');
+    this.select[this.select.length - 1].push(value);
+    return this;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  stackSet(value) {
+    if ((value === 100 || value === 90 || value === 50) && this.last === value) {
+      console.log('Error1');
+      this.stack.pop();
+      this.last = 0;
+      this.select.pop();
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (!this.stack.length) {
+      this.stack.push([]);
+    }
+    const stack = this.stack[this.stack.length - 1];
+    if (stack[stack.length - 1] < value
+      || (this.stack.length > 1 && this.stack[this.stack.length - 2] < value)) {
+      console.log(this.select, 'Error2');
+      this.stack.pop();
+      this.last = 0;
+      this.select.pop();
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.stack[this.stack.length - 1].push(value);
+    this.last = value;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    this.select.push([]);
+    this.stack.push([]);
+    this.stackSet(100);
+    return this.push(value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    this.stackSet(90);
+    return this.push('#').push(value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    this.stackSet(80);
+    return this.push('.').push(value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    this.stackSet(70);
+    return this.push('[').push(value).push(']');
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    this.stackSet(60);
+    return this.push(':').push(value);
+  },
+
+  pseudoElement(value) {
+    this.stackSet(50);
+    return this.push('::').push(value);
+  },
+
+  combine(selector1, combinator, selector2) {
+    const s1 = selector1.stringify();
+    const s2 = selector2.stringify();
+    return this.element(s2)
+      .push(' ')
+      .push(combinator)
+      .push(' ')
+      .push(s1);
+  },
+
+  stringify() {
+    this.stack.pop();
+    this.last = 0;
+    const result = this.select.pop().join('');
+    console.log(result, 'stringify');
+    return result;
   },
 };
 
