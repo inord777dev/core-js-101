@@ -385,8 +385,22 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  if (!pathes.length) {
+    return '';
+  }
+
+  const folders = pathes.map((x) => x.split('/').slice(0, -1));
+
+  function isCommon(index) {
+    return folders.length === folders.filter((x) => x[index] === folders[0][index]).length;
+  }
+
+  let index = 0;
+  while (index < folders[0].length && isCommon(index)) {
+    index += 1;
+  }
+  return index === 0 ? '' : `${folders[0].slice(0, index).join('/')}/`;
 }
 
 /**
@@ -444,7 +458,38 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-  throw new Error('Not implemented');
+  function winner(field, player) {
+    const col = new Array(3).fill(0);
+    const row = new Array(3).fill(0);
+    let diag = 0;
+    let rdiag = 0;
+    for (let i = 0; i < 3; i += 1) {
+      for (let j = 0; j < 3; j += 1) {
+        col[j] += field[j][i] === player;
+        row[j] += field[i][j] === player;
+      }
+      diag += field[i][i] === player;
+      rdiag += field[i][2 - i] === player;
+    }
+    return col.some((x) => x === 3)
+    || row.some((x) => x === 3)
+    || diag === 3
+    || rdiag === 3;
+  }
+
+  for (let i = 0; i < 3; i += 1) {
+    while (position[i].length < 3) {
+      position[i].push(undefined);
+    }
+  }
+
+  let res;
+  if (winner(position, 'X')) {
+    res = 'X';
+  } else if (winner(position, '0')) {
+    res = '0';
+  }
+  return res;
 }
 
 module.exports = {
