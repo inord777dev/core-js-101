@@ -142,7 +142,15 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  
+  return (...args) => {
+    const text = `${func.name}(${args
+      .map((x) => JSON.stringify(x))
+      .join(',')})`;
+    logFunc(`${text} starts`);
+    const res = func(...args);
+    logFunc(`${text} ends`);
+    return res;
+  };
 }
 
 /**
@@ -158,8 +166,17 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...args1) {
+  return function curried(...args2) {
+    const args = args1.concat(...args2);
+    if (args.length >= fn.length) {
+      return fn.apply(this, args);
+    }
+    const context = this;
+    return function subcurried(...args3) {
+      return curried.apply(context, args.concat(args3));
+    };
+  };
 }
 
 /**
@@ -179,8 +196,13 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  let x = startFrom;
+  return () => {
+    const y = x;
+    x += 1;
+    return y;
+  };
 }
 
 module.exports = {
